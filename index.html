@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Простой чат</title>
+<style>
+    /* Простой CSS для стилизации чата */
+    body {
+        font-family: Arial, sans-serif;
+    }
+    #chatbox {
+        width: 300px;
+        height: 400px;
+        border: 1px solid #ccc;
+        overflow-y: scroll;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    #inputMsg {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+        margin-top: 10px;
+    }
+</style>
+</head>
+<body>
+    <div id="chatbox"></div>
+    <input type="text" id="inputMsg" placeholder="Введите сообщение...">
+    <button onclick="sendMessage()">Отправить</button>
+
+    <script>
+        const socket = new WebSocket('ws://localhost:3000'); // Замените на ваш адрес сервера
+        socket.binaryType = 'arraybuffer'; // Устанавливаем тип данных как arraybuffer
+
+        function addMessage(message) {
+            const chatbox = document.getElementById('chatbox');
+            chatbox.innerHTML += `<p>${message}</p>`;
+            chatbox.scrollTop = chatbox.scrollHeight; // Прокручиваем вниз при добавлении нового сообщения
+        }
+
+        function sendMessage() {
+            const inputMsg = document.getElementById('inputMsg');
+            const message = inputMsg.value;
+            if (message.trim() !== '') {
+                socket.send(message); // Отправляем сообщение через WebSocket
+                addMessage(`Вы: ${message}`); // Добавляем сообщение в чат как отправленное
+                inputMsg.value = ''; // Очищаем поле ввода
+            }
+        }
+
+        socket.onmessage = function(event) {
+            const message = event.data;
+            // Преобразование ArrayBuffer в строку
+            const text = new TextDecoder().decode(message);
+                addMessage(`Собеседник: ${text}`); // Добавление текстового сообщения в чат
+        };
+    </script>
+</body>
+</html>
