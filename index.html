@@ -31,7 +31,7 @@
     <button onclick="sendMessage()">Отправить</button>
 
     <script>
-        const socket = new WebSocket('ws://localhost:3000'); // Замените на ваш адрес сервера
+        const socket = new WebSocket('ws://192.168.1.131:3000'); // Замените на ваш адрес сервера
         socket.binaryType = 'arraybuffer'; // Устанавливаем тип данных как arraybuffer
 
         function addMessage(message) {
